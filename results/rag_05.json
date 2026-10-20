@@ -1,0 +1,21 @@
+{
+    "experiment": "05 - RAG",
+    "model": "gemini-3.7-flash",
+    "question": "\nQuais fatores devem ser investigados quando uma propriedade\nagrícola apresenta uma queda significativa de produtividade?\n",
+    "retrieved_chunks": [
+        {
+            "chunk": "A produtividade de uma cultura pode ser influenciada por fatores\ncomo disponibilidade hídrica, condições do solo, ocorrência de\npragas e doenças, clima, manejo da cultura e disponibilidade\nde nutrientes.",
+            "score": 5
+        },
+        {
+            "chunk": "Características físicas e químicas do solo podem influenciar\no desenvolvimento das culturas. Informações como pH, umidade,\nfertilidade e disponibilidade de nutrientes podem ser relevantes\npara uma investigação agrícola.",
+            "score": 4
+        },
+        {
+            "chunk": "Dados históricos de produtividade podem ser utilizados para\nidentificar padrões e comparar diferentes períodos de produção.\nInformações meteorológicas, registros de manejo e dados de\ncampo podem complementar essa análise.",
+            "score": 3
+        }
+    ],
+    "context": "A produtividade de uma cultura pode ser influenciada por fatores\ncomo disponibilidade hídrica, condições do solo, ocorrência de\npragas e doenças, clima, manejo da cultura e disponibilidade\nde nutrientes.\n\nCaracterísticas físicas e químicas do solo podem influenciar\no desenvolvimento das culturas. Informações como pH, umidade,\nfertilidade e disponibilidade de nutrientes podem ser relevantes\npara uma investigação agrícola.\n\nDados históricos de produtividade podem ser utilizados para\nidentificar padrões e comparar diferentes períodos de produção.\nInformações meteorológicas, registros de manejo e dados de\ncampo podem complementar essa análise.",
+    "answer": "Com base exclusivamente nas informações fornecidas no contexto, os fatores e dados que devem ser investigados incluem:\n\n* **Fatores gerais de produção:**\n  * Disponibilidade hídrica;\n  * Clima e informações meteorológicas;\n  * Ocorrência de pragas e doenças;\n  * Manejo da cultura e registros de manejo.\n\n* **Condições do solo (características físicas e químicas):**\n  * pH;\n  * Umidade do solo;\n  * Fertilidade;\n  * Disponibilidade de nutrientes.\n\n* **Dados de apoio e histórico:**\n  * Dados históricos de produtividade (para comparar períodos e identificar padrões);\n  * Dados de campo."
+}

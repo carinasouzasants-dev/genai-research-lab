@@ -1,0 +1,45 @@
+CONHECIMENTO EXPERIMENTAL SOBRE AGRICULTURA
+
+Produtividade agrícola
+
+A produtividade de uma cultura pode ser influenciada por fatores
+como disponibilidade hídrica, condições do solo, ocorrência de
+pragas e doenças, clima, manejo da cultura e disponibilidade
+de nutrientes.
+
+Disponibilidade hídrica
+
+A disponibilidade de água é um fator importante para o
+desenvolvimento das culturas. Períodos de déficit hídrico podem
+afetar o crescimento das plantas e reduzir a produtividade.
+
+Solo e nutrientes
+
+Características físicas e químicas do solo podem influenciar
+o desenvolvimento das culturas. Informações como pH, umidade,
+fertilidade e disponibilidade de nutrientes podem ser relevantes
+para uma investigação agrícola.
+
+Pragas e doenças
+
+A ocorrência de pragas e doenças pode afetar o desenvolvimento
+das plantas e contribuir para perdas de produtividade. A
+identificação da ocorrência, distribuição e intensidade desses
+eventos pode apoiar a investigação.
+
+Dados históricos
+
+Dados históricos de produtividade podem ser utilizados para
+identificar padrões e comparar diferentes períodos de produção.
+Informações meteorológicas, registros de manejo e dados de
+campo podem complementar essa análise.
+
+Inteligência Artificial no agronegócio
+
+Sistemas de Inteligência Artificial podem apoiar a análise de
+grandes volumes de dados, identificação de padrões, classificação
+de informações, geração de relatórios e apoio à tomada de decisão.
+
+Uma aplicação de IA deve utilizar dados relevantes, validar os
+resultados e considerar o contexto do problema antes de apoiar
+uma decisão operacional.
