@@ -1,0 +1,28 @@
+{
+    "experiment": "08 - RAG with Embeddings",
+    "embedding_model": "gemini-embedding-2",
+    "generation_model": "gemini-3.6-flash",
+    "question": "\nUma propriedade agrícola apresentou uma queda significativa\nna produtividade. Quais fatores deveriam ser investigados\npara entender as possíveis causas?\n",
+    "document_count": 14,
+    "embedding_dimension": 3072,
+    "top_k": 3,
+    "retrieved_chunks": [
+        {
+            "chunk_index": 3,
+            "chunk": "A produtividade de uma cultura pode ser influenciada por fatores\ncomo disponibilidade hídrica, condições do solo, ocorrência de\npragas e doenças, clima, manejo da cultura e disponibilidade\nde nutrientes.",
+            "similarity": 0.815418
+        },
+        {
+            "chunk_index": 7,
+            "chunk": "Características físicas e químicas do solo podem influenciar\no desenvolvimento das culturas. Informações como pH, umidade,\nfertilidade e disponibilidade de nutrientes podem ser relevantes\npara uma investigação agrícola.",
+            "similarity": 0.811354
+        },
+        {
+            "chunk_index": 11,
+            "chunk": "Dados históricos de produtividade podem ser utilizados para\nidentificar padrões e comparar diferentes períodos de produção.\nInformações meteorológicas, registros de manejo e dados de\ncampo podem complementar essa análise.",
+            "similarity": 0.76764
+        }
+    ],
+    "context": "A produtividade de uma cultura pode ser influenciada por fatores\ncomo disponibilidade hídrica, condições do solo, ocorrência de\npragas e doenças, clima, manejo da cultura e disponibilidade\nde nutrientes.\n\nCaracterísticas físicas e químicas do solo podem influenciar\no desenvolvimento das culturas. Informações como pH, umidade,\nfertilidade e disponibilidade de nutrientes podem ser relevantes\npara uma investigação agrícola.\n\nDados históricos de produtividade podem ser utilizados para\nidentificar padrões e comparar diferentes períodos de produção.\nInformações meteorológicas, registros de manejo e dados de\ncampo podem complementar essa análise.",
+    "answer": "Com base exclusivamente no contexto fornecido, apresento a análise dos fatores a serem investigados:\n\n---\n\n### 1. Fatores a Serem Investigados\n\nPara entender as possíveis causas da queda de produtividade, devem ser investigados os seguintes pontos:\n\n*   **Solo (Características físicas e químicas):**\n    *   pH do solo;\n    *   Umidade;\n    *   Fertilidade;\n    *   Disponibilidade de nutrientes e condições gerais do solo.\n*   **Clima e Recursos Hídricos:**\n    *   Disponibilidade hídrica;\n    *   Clima geral e informações meteorológicas.\n*   **Manejo e Operação:**\n    *   Manejo da cultura aplicado;\n    *   Registros de manejo passados e dados de campo.\n*   **Sanidade Vegetal:**\n    *   Ocorrência de pragas e doenças.\n*   **Histórico de Produção:**\n    *   Dados históricos de produtividade para comparar diferentes períodos e identificar padrões.\n\n---\n\n### 2. Diferenciação: Fatores Conhecidos vs. Hipóteses a Investigar\n\n*   **Fatores Conhecidos (Fatos apresentados no texto):** Sabe-se que a produtividade e o desenvolvimento das culturas são diretamente influenciados por clima, disponibilidade hídrica, condições do solo, nutrientes, manejo e pragas/doenças.\n*   **Hipóteses a Investigar (No caso específico da propriedade):** Como não há dados específicos sobre o local, cada um dos fatores acima constitui uma hipótese que precisa ser checada (por exemplo: hipótese de alteração no pH/fertilidade, hipótese de ocorrência de pragas/doenças, hipótese de restrição hídrica/climática ou falha nos registros/práticas de manejo).\n\n---\n\n### 3. Limitações da Análise\n\nO contexto fornecido apresenta apenas os fatores genéricos que influenciam a produtividade agrícola e quais fontes de informação podem ser analisadas. **Não há dados específicos sobre a propriedade em questão** (como análises de solo, registros meteorológicos, dados de campo ou histórico produtivo real), sendo impossível apontar a causa exata da queda de produtividade sem o acesso a essas informações concretas."
+}
