@@ -1,0 +1,22 @@
+{
+    "problema": "Queda significativa na produtividade da propriedade agrícola durante determinado período",
+    "possiveis_causas": [
+        "Estresse hídrico decorrente de estiagem ou falhas no sistema de irrigação",
+        "Incidência severa de pragas ou doenças fúngicas e bacterianas",
+        "Deficiência nutricional ou degradação química e física do solo",
+        "Condições climáticas adversas, como extremos de temperatura ou granizo",
+        "Falhas no manejo agronômico, calibração de equipamentos ou qualidade de sementes"
+    ],
+    "evidencias": [
+        "Volume de colheita abaixo da média histórica e do potencial produtivo da cultivar",
+        "Plantas com sintomas de murcha, clorose foliar ou porte reduzido",
+        "Registros meteorológicos com desvios pluviométricos ou térmicos no período",
+        "Presença visível de sintomas de danos mecânicos, fitotoxidez ou ataques fitossanitários"
+    ],
+    "acoes_recomendadas": [
+        "Realizar análise completa de fertilidade e compactação do solo",
+        "Efetuar vistoria técnica de campo para monitoramento fitossanitário detalhado",
+        "Revisar o histórico climático da safra e avaliar a eficiência da irrigação",
+        "Elaborar plano de correção nutricional e manejo integrado de pragas e doenças"
+    ]
+}
