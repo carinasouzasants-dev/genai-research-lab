@@ -1,0 +1,20 @@
+{
+    "experiment": "06 - Embeddings + Semantic Search",
+    "embedding_model": "gemini-embedding-2",
+    "question": "\nO que pode explicar uma redução no rendimento de uma plantação?\n",
+    "embedding_dimension": 3072,
+    "top_results": [
+        {
+            "chunk": "A produtividade de uma cultura pode ser influenciada por fatores\ncomo disponibilidade hídrica, condições do solo, ocorrência de\npragas e doenças, clima, manejo da cultura e disponibilidade\nde nutrientes.",
+            "similarity": 0.795092
+        },
+        {
+            "chunk": "A disponibilidade de água é um fator importante para o\ndesenvolvimento das culturas. Períodos de déficit hídrico podem\nafetar o crescimento das plantas e reduzir a produtividade.",
+            "similarity": 0.782284
+        },
+        {
+            "chunk": "Características físicas e químicas do solo podem influenciar\no desenvolvimento das culturas. Informações como pH, umidade,\nfertilidade e disponibilidade de nutrientes podem ser relevantes\npara uma investigação agrícola.",
+            "similarity": 0.764079
+        }
+    ]
+}
