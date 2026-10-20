@@ -1,0 +1,33 @@
+{
+    "experiment": "04 - Evaluation",
+    "models": [
+        {
+            "model_name": "Gemini 3.8 Flash",
+            "score": 30,
+            "evaluation": {
+                "clareza": 5,
+                "completude": 5,
+                "aderencia_as_instrucoes": 5,
+                "qualidade_das_informacoes": 5,
+                "aplicabilidade": 5,
+                "uso_responsavel_de_hipoteses": 5,
+                "justificativa": "A resposta do Modelo 1 é excelente. Apresenta uma estrutura impecável, termos técnicos pertinentes e contemporâneos de agronomia e ciência de dados (como valores SHAP e índices de vegetação), além de tratar explicitamente as causas levantadas como hipóteses preliminares que exigem comprovação empírica."
+            }
+        },
+        {
+            "model_name": "Gemini 3.7 Flash",
+            "score": 30,
+            "evaluation": {
+                "clareza": 5,
+                "completude": 5,
+                "aderencia_as_instrucoes": 5,
+                "qualidade_das_informacoes": 5,
+                "aplicabilidade": 5,
+                "uso_responsavel_de_hipoteses": 5,
+                "justificativa": "A resposta do Modelo 2 é de altíssimo nível. Apresenta grande riqueza de detalhes práticos do cotidiano agrícola (como amostragem de pragas/scouting, abertura de trincheiras para avaliação de perfil radicular e análise tecidual), ao mesmo tempo em que descreve aplicações de inteligência artificial de forma realista e tecnicamente precisa, mantendo rigoroso tratamento das causas como hipóteses."
+            }
+        }
+    ],
+    "best_model": "Modelo 2",
+    "comparative_justification": "Ambos os modelos entregaram respostas excepcionais, com notas máximas em todos os critérios avaliados. O Modelo 2 destacou-se ligeiramente por fornecer detalhes agronômicos e de campo ainda mais práticos e completos — como a menção a laudos de scouting, análise tecidual (foliar), inspeção via abertura de trincheiras e detecção de anomalias operacionais específicas em telemetria (oscilação de pressão na barra e velocidade)."
+}
