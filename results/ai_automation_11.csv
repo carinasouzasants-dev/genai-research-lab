@@ -1,0 +1,2 @@
+category,priority,summary,identified_factors,recommended_action,requires_human_review
+Produtividade Agrícola,Média,"Queda de produtividade na soja associada a oscilações climáticas e do solo, sem dados suficientes no relatório para confirmar a causa definitiva.",precipitação irregular | períodos de déficit hídrico | temperatura elevada em alguns dias | possíveis alterações nas condições do solo,"Analisar dados históricos, informações de solo, clima, manejo e ocorrência de pragas antes de tomar decisões operacionais.",True

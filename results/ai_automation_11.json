@@ -1,0 +1,17 @@
+{
+    "experiment": "11 - AI Automation",
+    "model": "gemini-3.8-flash",
+    "input_type": "agricultural_report",
+    "category": "Produtividade Agrícola",
+    "priority": "Média",
+    "summary": "Queda de produtividade na soja associada a oscilações climáticas e do solo, sem dados suficientes no relatório para confirmar a causa definitiva.",
+    "identified_factors": [
+        "precipitação irregular",
+        "períodos de déficit hídrico",
+        "temperatura elevada em alguns dias",
+        "possíveis alterações nas condições do solo"
+    ],
+    "recommended_action": "Analisar dados históricos, informações de solo, clima, manejo e ocorrência de pragas antes de tomar decisões operacionais.",
+    "requires_human_review": true,
+    "data_note": "Os dados utilizados neste experimento são experimentais e simulados exclusivamente para este laboratório."
+}
