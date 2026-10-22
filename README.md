@@ -1,903 +1,337 @@
-# 🧠 GenAI Research Lab
+# GenAI Research Lab
 
 <p align="center">
-  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0B1020,45:4F46E5,100:00D4FF&height=230&section=header&text=GenAI%20Research%20Lab&fontSize=44&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35&desc=Experimenting%20%7C%20Evaluating%20%7C%20Building%20%7C%20Applying&descAlignY=58&descSize=18" width="100%" />
+  <img src="https://capsule-render.vercel.app/api?type=waving&color=0:0B1020,45:4F46E5,100:00D4FF&height=230&section=header&text=GenAI%20Research%20Lab&fontSize=44&fontColor=FFFFFF&animation=fadeIn&fontAlignY=35&desc=Experimentar%20%7C%20Testar%20%7C%20Avaliar%20%7C%20Aplicar&descAlignY=58&descSize=18" width="100%" />
 </p>
 
 <p align="center">
-  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&size=19&duration=2800&pause=700&color=00D4FF&center=true&vCenter=true&width=900&lines=Hands-on+Generative+AI+experimentation;LLMs+%7C+RAG+%7C+Embeddings+%7C+Agents;From+individual+experiments+to+an+applied+AI+system;AgroGenAI+%7C+Generative+AI+for+Agricultural+Intelligence" alt="Typing animation" />
+  <img src="https://readme-typing-svg.demolab.com?font=JetBrains+Mono&size=19&duration=2800&pause=700&color=00D4FF&center=true&vCenter=true&width=920&lines=Testar+IA+generativa+antes+de+usar+a+resposta;Um+caso+agr%C3%ADcola%2C+doze+experimentos%2C+resultado+gravado;O+modelo+fica+no+texto+ou+completa+a+hist%C3%B3ria%3F;Python+%7C+Gemini+%7C+RAG+%7C+AgroGenAI" alt="Tema do laboratório" />
 </p>
 
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white" />
   <img src="https://img.shields.io/badge/Google%20Gemini-GenAI-4285F4?style=for-the-badge&logo=google&logoColor=white" />
-  <img src="https://img.shields.io/badge/Experiments-12-6D5DFB?style=for-the-badge" />
-  <img src="https://img.shields.io/badge/Status-Active-00C853?style=for-the-badge" />
-</p>
-
-<p align="center">
-  <a href="https://github.com/carinasouzasants-dev/genai-research-lab">
-    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" />
-  </a>
+  <img src="https://img.shields.io/badge/Experimentos-12-6D5DFB?style=for-the-badge" />
+  <img src="https://img.shields.io/badge/Testes-unittest-00C853?style=for-the-badge" />
 </p>
 
 ---
 
-## 🔎 Overview
+# 🎯 Para que serve
 
-**GenAI Research Lab** is a hands-on laboratory for studying, experimenting with, and integrating Generative AI techniques using Python and Google Gemini.
+Este laboratório serve para testar IA generativa num problema agrícola e guardar o que aconteceu.
 
-The project was built progressively rather than starting with a large application.
+A situação é sempre a mesma: uma área com queda de produtividade. Em cima dela eu fui verificando, uma peça por vez, se o modelo ajuda uma análise ou se só escreve uma resposta bonita. A peça só entra na etapa seguinte depois que o teste mostra o que ela faz, inclusive o erro.
 
-Each experiment isolates an AI engineering concept, tests it in practice, records the result, and uses the knowledge gained to build the next layer.
+O uso que eu tenho em mente é este. Chega um relatório de campo, uma nota ou uma planilha. O sistema lê o que está no arquivo, escolhe o trecho certo, devolve um registro que outra pessoa consegue usar e avisa quando o dado não fecha. Ele não substitui quem conhece a lavoura.
 
-The laboratory evolves from:
+Os números de soja, milho e algodão são inventados. Estão aqui para a ferramenta ter o que responder. Não são dados de fazenda, e nada neste repositório é diagnóstico.
+
+Dá para ler o teste inteiro nesta página. Não precisa rodar o código.
+
+---
+
+# 🧭 Como o laboratório foi montado
 
 ```text
-Prompt Engineering
+um problema agrícola
         ↓
-Structured Outputs
+uma peça só por experimento
         ↓
-Model Comparison
+o resultado gravado em results/
         ↓
-LLM Evaluation
+a peça seguinte usa o que a anterior mostrou
         ↓
-RAG
-        ↓
-Embeddings
-        ↓
-Semantic / Vector Search
-        ↓
-RAG + Embeddings
-        ↓
-Tool Calling
-        ↓
-AI Agent
-        ↓
-AI Automation
-        ↓
-AgroGenAI
+AgroGenAI junta busca, análise e revisão humana
 ```
 
-The final experiment, **AgroGenAI**, integrates several of these concepts into an experimental Generative AI application for agricultural intelligence.
+| O que eu queria saber | Onde isso foi testado |
+|---|---|
+| A forma do pedido muda a resposta? | 01 |
+| A resposta vira dado, ou continua texto solto? | 02 e 11 |
+| Modelo mais novo é sempre melhor? | 03 e 04 |
+| A busca entrega o parágrafo da lavoura? | 05 a 08 |
+| O modelo pede o número ou inventa? | 09 e 10 |
+| O fluxo inteiro sabe parar e chamar uma pessoa? | 12 |
 
 ---
 
-## 🎯 Project Goals
+# 🧪 Os 12 experimentos
 
-The main goals of this laboratory are to develop practical understanding of:
-
-- Large Language Models
-- Prompt Engineering
-- Structured Outputs
-- LLM Evaluation
-- Retrieval-Augmented Generation
-- Embeddings
-- Semantic Search
-- Vector Search
-- Tool Calling
-- AI Agents
-- AI Automation
-- Applied Generative AI
-- Responsible AI behavior
-- Human-in-the-loop workflows
-
-The focus is not simply on obtaining an answer from an LLM.
-
-The goal is to understand:
-
-> **How can Generative AI systems be designed, tested, evaluated, integrated and applied to real-world problems?**
+| # | Etapa | Resultado que ficou |
+|:--:|---|---|
+| 01 | Prompt com exemplo e sem exemplo | O pedido com exemplo exige causas, evidências e ações |
+| 02 | JSON validado | Causas, evidências e ações em lista, sem texto solto |
+| 03 | Dois modelos, o mesmo prompt | 3.7 Flash foi mais rápido e escreveu mais |
+| 04 | Rubrica de 1 a 5 | 30/30 nos dois. O juiz, outro modelo, apontou o 3.7 |
+| 05 | Busca por palavra | O 1º lugar foi o parágrafo do escritório, nota 4 |
+| 06 | Busca por sentido | O 1º lugar foi déficit hídrico, similaridade 0,784 |
+| 07 | A mesma busca numa matriz | A ordenação do embedding, pronta para consultar |
+| 08 | Resposta com o contexto do embedding | O modelo lê a lavoura, não o escritório |
+| 09 | Ferramenta antes do texto | 3.200 kg/ha e estresse hídrico moderado no Sul |
+| 10 | Agente com teto de etapas | 2 etapas, as duas consultas, e a ressalva de dado simulado |
+| 11 | Relatório vira planilha | Prioridade média e revisão humana marcada |
+| 12 | AgroGenAI | Análise de soja com revisão humana verdadeira |
 
 ---
 
-# 🧪 Experiment Roadmap
+# 🌾 Etapa por etapa
 
-| # | Experiment | Main Concept | Status |
-|:--:|---|---|:--:|
-| 01 | Prompt Comparison | Zero-shot vs Few-shot | ✅ |
-| 02 | Structured Output | Schema-based generation | ✅ |
-| 03 | Model Comparison | Gemini model comparison | ✅ |
-| 04 | LLM Evaluation | Rubric-based evaluation | ✅ |
-| 05 | Basic RAG | Knowledge retrieval | ✅ |
-| 06 | Embeddings | Semantic representations | ✅ |
-| 07 | Vector Search | Similarity search | ✅ |
-| 08 | RAG + Embeddings | Semantic retrieval | ✅ |
-| 09 | Tool Calling | LLM + external tools | ✅ |
-| 10 | AI Agent | Reasoning + actions | ✅ |
-| 11 | AI Automation | AI workflow automation | ✅ |
-| 12 | AgroGenAI | Applied GenAI system | ✅ |
+## 01 · Comparação de prompt
 
----
+**O teste.** A mesma queda de produtividade vai duas vezes ao modelo. Na primeira não há exemplo. Na segunda há dois casos agrícolas já analisados, e o pedido exige três blocos: causas, evidências e ações.
 
-# 🧬 Technical Evolution
+**Para que serve.** A instrução é a primeira alavanca. Sem exemplo, o modelo escolhe o formato. Com exemplo, a resposta já nasce no formato de uma análise.
 
-## 01 → Prompt Comparison
+**O resultado.** O que muda de um para o outro é o contrato da resposta, não um número mágico de qualidade. O script mede o tempo das duas chamadas e grava as duas saídas. Few-shot só vale se o exemplo for do tipo de análise que a gente quer repetir.
 
-The first experiment investigates how different prompting strategies influence LLM responses.
+## 02 · Saída estruturada
 
-### Compared
+**O teste.** O modelo tem de preencher um schema: problema, causas, evidências e ações. Se não couber no schema, não passa.
 
-- Zero-shot prompting
-- Few-shot prompting
-- Response quality
-- Practical usefulness
-- Execution time
+**Para que serve.** Texto livre não entra numa fila, numa planilha ou num próximo sistema. JSON entra.
 
-### Why it matters
+**O resultado.** O problema registrado foi a queda de produtividade. Entre as causas apareceu estresse hídrico, praga, solo e falha de manejo. Entre as ações, análise de solo, vistoria e revisão do clima e da irrigação. A resposta deixou de ser um parágrafo e virou lista.
 
-Prompt design is one of the first control layers of an LLM application.
+## 03 · Comparação de modelos
 
----
+**O teste.** Gemini 3.8 Flash e Gemini 3.7 Flash receberam o mesmo pedido: causas, dados a investigar, ações e como a IA ajudaria, sem inventar número da propriedade.
 
-## 02 → Structured Output
+**Para que serve.** Trocar de modelo é decisão de engenharia. Nome mais novo não basta.
 
-The model is constrained to produce structured data instead of unrestricted text.
+**O resultado.**
 
-### Technologies
+| Modelo | Tempo | Tamanho |
+|---|--:|--:|
+| Gemini 3.8 Flash | 77,74 s | 4.130 caracteres |
+| Gemini 3.7 Flash | 59,43 s | 4.922 caracteres |
 
-- Python
-- Pydantic
-- JSON
-- Gemini Structured Outputs
+Os dois separaram hipótese de fato. Nesta execução o 3.7 foi mais rápido e mais longo. Tempo, sozinho, não escolhe o modelo. Por isso existe a etapa 04.
 
-### Goal
+## 04 · Avaliação
 
-Make LLM responses easier to consume programmatically.
+**O teste.** Uma rubrica de 1 a 5 lê as duas respostas. Os critérios são clareza, completude, aderência ao pedido, qualidade, aplicabilidade e cuidado ao marcar hipótese. Nota fora de 1–5 quebra a execução.
+
+**Para que serve.** Resposta gerada não é resposta confiável. Alguém, ou alguma regra, precisa olhar.
+
+**O resultado.** Os dois modelos ficaram com 30/30. O avaliador indicou o 3.7 Flash porque a resposta desceu mais ao campo: amostragem, análise de tecido, trincheira de raiz. Eu deixo essa nota no registro com o limite junto: quem deu a nota também foi um modelo. Nota máxima dos dois lados não encerra a escolha.
+
+## 05 · RAG por palavra
+
+**O teste.** A pergunta é única, e também é a dos experimentos 06, 07 e 08:
+
+> Como a falta de chuva reduz o que a planta produz?
+
+A busca conta palavras iguais e manda ao modelo só os parágrafos que mais coincidem. A resposta tem de ficar nesse contexto.
+
+**Para que serve.** É o jeito simples de “usar um documento”. Funciona quando o texto repete a pergunta. Falha quando o texto certo usa outras palavras.
+
+**O resultado.**
+
+| Lugar | Nota | Trecho |
+|:--:|:--:|---|
+| 1 | 4 | Escritório: a falta de chuva no calendário reduz o que a equipe administrativa produz. Não descreve a lavoura. |
+| 2 | 1 | Lavoura: períodos secos, menos água no solo, menos grãos, colheita menor. |
+
+Se a resposta fosse gerada aqui, o modelo leria o escritório primeiro.
+
+## 06 · Embeddings
+
+**O teste.** A mesma pergunta e a mesma base. Cada parágrafo vira um vetor com `gemini-embedding-2`. A ordem é a do cosseno, a proximidade de sentido.
+
+**Para que serve.** A busca deixa de depender da palavra copiada. “Falta de chuva” pode encontrar “déficit hídrico”.
+
+**O resultado.** O escritório, que tinha ganhado por palavra, não entrou nos três primeiros.
+
+| Lugar | Similaridade | Trecho |
+|:--:|:--:|---|
+| 1 | 0,784 | Disponibilidade de água e déficit hídrico reduzindo a produtividade |
+| 2 | 0,756 | Solo seco, menos grãos, colheita menor |
+| 3 | 0,713 | Água, solo, pragas, clima, manejo e nutrientes |
 
 ```text
-LLM
- ↓
-Schema
- ↓
-Validated JSON
- ↓
-Application
+a mesma pergunta
+     ├── palavra   →  escritório
+     └── embedding →  água e colheita
 ```
 
----
+Esse é o resultado que eu guardo do laboratório. O método de busca muda o texto que o modelo tem permissão de usar.
 
-## 03 → Model Comparison
+## 07 · Busca vetorial
 
-Different Gemini models are evaluated against the same task.
+**O teste.** A conta do experimento 06, com os vetores numa matriz NumPy.
 
-The experiment explores differences in:
+**Para que serve.** Separar “transformar o texto em vetor” de “consultar esses vetores”. A matriz é o índice. A pergunta nova só precisa de um vetor para ser comparada com ele.
 
-- Response time
-- Output size
-- Detail
-- Practical usefulness
-- Overall response quality
+**O resultado.** A ordem é a mesma do embedding. O que este experimento acrescenta é o índice: a base consultável, não uma lista refeita à mão a cada pergunta.
 
-The goal is to understand that **model selection is an engineering decision**, not simply a matter of choosing the newest model.
+## 08 · RAG com embeddings
 
----
+**O teste.** O mesmo desenho do experimento 05, trocando a origem do contexto. Entram os parágrafos do embedding, não os da palavra.
 
-## 04 → LLM Evaluation
+**Para que serve.** Mostrar a consequência prática da tabela acima. Quem lê o contexto do 05 lê o escritório. Quem lê o contexto do 08 lê seca, água e colheita.
 
-A simple evaluation framework was implemented to compare generated responses using a defined rubric.
+**O resultado.** A geração desta etapa usa `gemini-3.6-flash`. O 3.8 respondeu 503 na hora do teste, e o cliente tenta de novo nesses casos antes de desistir. O modelo da resposta importa menos, aqui, do que o parágrafo que chegou até ele.
 
-### Evaluation dimensions
+## 09 · Tool calling
 
-- Clarity
-- Completeness
-- Instruction adherence
-- Quality
-- Applicability
-- Responsible use of hypotheses
+**O teste.** O modelo ganha duas ferramentas com dados inventados: produtividade por cultura e região, e clima da região. A pergunta pede a soja no Sul.
 
-This experiment introduces a fundamental AI engineering principle:
+**Para que serve.** Número de lavoura não deve sair da memória do modelo. Se o dado existe numa função, a função é quem responde.
 
-> **A generated response should be evaluated, not automatically trusted.**
+**O resultado.** Ele chamou as duas ferramentas antes de escrever.
 
----
+| Consulta | Retorno |
+|---|---|
+| Soja, Sul | 3.200 kg/ha |
+| Clima, Sul | 820 mm · 22,4 °C · estresse hídrico moderado |
 
-## 05 → Basic RAG
+A resposta aponta o estresse moderado como o ponto a investigar e avisa que o número não é de uma propriedade.
 
-The project introduces Retrieval-Augmented Generation using a local agricultural knowledge base.
+## 10 · Agente
 
-Instead of relying only on the model's internal knowledge:
+**O teste.** O modelo decide se chama ferramenta, lê o retorno e pode chamar de novo. O teto é 4 etapas. Se passar disso sem resposta, o ciclo para.
+
+**Para que serve.** Uma chamada só não é um fluxo. O fluxo precisa de parada. Sem teto, o agente pode ficar pedindo ferramenta.
+
+**O resultado.** Usou 2 etapas, dentro do teto. Na primeira, chamou produtividade e clima. Os retornos foram os mesmos: 3.200 kg/ha, 820 mm, 22,4 °C, estresse moderado. A análise final trata o estresse como alerta de distribuição de chuva e fecha dizendo que o dado é simulado.
+
+## 11 · Automação
+
+**O teste.** Um relatório de campo, em texto corrido, tem de sair como registro: categoria, prioridade, resumo, fatores, ação e se uma pessoa precisa revisar. O script grava JSON e CSV.
+
+**Para que serve.** É o ponto em que a IA entra numa rotina. O próximo passo não é um leitor. É uma planilha, uma fila, um responsável.
+
+**O resultado.**
+
+| Campo | Valor |
+|---|---|
+| Categoria | Produtividade agrícola |
+| Prioridade | Média |
+| Revisão humana | Sim |
+| Fatores | chuva irregular, déficit hídrico, temperatura alta em alguns dias, sinais no solo |
+| Ação | Cruzar histórico, solo, clima, manejo e pragas antes de decidir |
+
+O resumo não inventa a causa. Diz que o relatório não tem dado para fechá-la. A revisão humana ficou marcada por isso.
+
+## 12 · AgroGenAI
+
+**O teste.** As peças anteriores no mesmo relatório de soja: produtividade abaixo do histórico, chuva irregular, possível déficit hídrico, temperatura acima do padrão e sinais no solo. O relatório já diz que isso não basta para nomear a causa.
+
+**Para que serve.** É o protótipo. Não é um produto de diagnóstico. Mostra o fluxo que eu levaria para um relatório real: buscar o trecho, analisar sem sair dele e devolver o que ainda depende de uma pessoa.
 
 ```text
-User Query
-    ↓
-Knowledge Base
-    ↓
-Relevant Context
-    ↓
-LLM
-    ↓
-Response
+┌──────────────────────────────┐
+│      Relatório de soja       │
+└───────────────┬──────────────┘
+                ▼
+┌──────────────────────────────┐
+│     Busca por embedding      │
+└───────────────┬──────────────┘
+                ▼
+┌──────────────────────────────┐
+│      Trechos da base         │
+└───────────────┬──────────────┘
+                ▼
+┌──────────────────────────────┐
+│            Gemini            │
+└───────────────┬──────────────┘
+                ▼
+┌──────────────────────────────┐
+│   Análise + revisão humana   │
+└──────────────────────────────┘
 ```
 
-The experiment demonstrates the basic relationship between retrieval and generation.
+**O resultado.**
+
+| Campo | O que saiu |
+|---|---|
+| Trecho mais próximo | Histórico, meteorologia e manejo · similaridade 0,795 |
+| Categoria | Produtividade agrícola / fatores climáticos e de solo |
+| Prioridade | Média |
+| Revisão humana | Sim |
+
+O próprio resultado lista o risco: sem vistoria, clima vira causa falsa. A recomendação é coletar chuva, temperatura, solo, manejo e ocorrência de praga. Não é uma ordem de campo.
 
 ---
 
-## 06 → Embeddings
-
-Text is transformed into numerical vector representations using an embedding model.
-
-### Embedding model
-
-`gemini-embedding-2`
-
-Embeddings allow text to be compared according to semantic similarity rather than only exact keyword matching.
-
-```text
-Text
- ↓
-Embedding Model
- ↓
-Vector Representation
- ↓
-Semantic Comparison
-```
-
----
-
-## 07 → Vector Search
-
-A local vector search mechanism was implemented using numerical similarity.
-
-### Concepts explored
-
-- Embeddings
-- Vector representations
-- Cosine similarity
-- Similarity ranking
-- Top-K retrieval
-
-The experiment transforms the embedding concept into an actual retrieval mechanism.
-
----
-
-## 08 → RAG + Embeddings
-
-The previous experiments are combined into a semantic retrieval pipeline.
-
-```text
-Query
- ↓
-Query Embedding
- ↓
-Vector Similarity
- ↓
-Top-K Documents
- ↓
-Context
- ↓
-LLM
- ↓
-Generated Response
-```
-
-This represents a more realistic foundation for knowledge-grounded AI applications.
-
----
-
-## 09 → Tool Calling
-
-The LLM is connected to simulated external tools.
-
-The experiment demonstrates how a model can determine when additional information should be retrieved through a function.
-
-### Simulated tools
-
-- Crop productivity
-- Weather information
-
-```text
-User Request
-      ↓
-     LLM
-      ↓
-Tool Decision
-      ↓
-Function Call
-      ↓
-Tool Result
-      ↓
-     LLM
-      ↓
-Final Response
-```
-
-This introduces the connection between LLMs and external systems.
-
----
-
-## 10 → AI Agent
-
-Tool Calling is extended into an agentic workflow.
-
-The agent can:
-
-1. Analyze the request
-2. Determine which tool is relevant
-3. Execute the tool
-4. Receive the result
-5. Continue processing
-6. Produce a final analysis
-
-```text
-              ┌───────────────┐
-              │     User      │
-              └───────┬───────┘
-                      ↓
-              ┌───────────────┐
-              │   AI Agent    │
-              └───────┬───────┘
-                      ↓
-               Choose Action
-                      ↓
-              ┌───────────────┐
-              │     Tool      │
-              └───────┬───────┘
-                      ↓
-                 Tool Result
-                      ↓
-                 Agent Loop
-                      ↓
-              Final Response
-```
-
-The experiment used multiple tool calls in a single reasoning workflow.
-
----
-
-## 11 → AI Automation
-
-The project then explores a more operational workflow.
-
-An unstructured agricultural report is transformed into structured information that can be consumed by other systems.
-
-```text
-Agricultural Report
-        ↓
-       LLM
-        ↓
-Classification
-        ↓
-Structured Data
-        ↓
-   ┌────┴────┐
-   ↓         ↓
- JSON       CSV
-```
-
-The generated structure includes:
-
-- Category
-- Priority
-- Summary
-- Identified factors
-- Recommended action
-- Human analysis requirement
-
-The workflow also explicitly preserves the need for human validation when the available information is insufficient.
-
----
-
-# 🌱 12 → AgroGenAI
-
-## Generative AI for Agricultural Intelligence
-
-**AgroGenAI** is the final experimental application of the laboratory.
-
-It combines the concepts investigated throughout the previous experiments into a single pipeline.
-
-The prototype explores how Generative AI can assist in analyzing agricultural information while maintaining:
-
-- Context retrieval
-- Semantic similarity
-- Structured generation
-- Explicit uncertainty
-- Human validation
-
----
-
-## 🏗️ AgroGenAI Architecture
-
-```text
-┌─────────────────────────────┐
-│   Agricultural Report       │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│     Query Embedding         │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│      Semantic Search        │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│  Relevant Knowledge Chunks  │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│        Gemini LLM           │
-└──────────────┬──────────────┘
-               │
-               ▼
-┌─────────────────────────────┐
-│     Structured Analysis     │
-└──────────────┬──────────────┘
-               │
-       ┌───────┴────────┐
-       ▼                ▼
- Recommendations   Risks & Limits
-       │                │
-       └───────┬────────┘
-               ▼
-     Human Validation
-```
-
----
-
-## 📥 Example Input
-
-The prototype receives an experimental report describing a soybean production scenario involving:
-
-- Reduced estimated productivity
-- Irregular rainfall
-- Possible water deficit
-- Higher temperatures
-- Possible soil changes
-- Insufficient data to establish a definitive cause
-
----
-
-## 📤 Example Output
-
-The system produces a structured analysis containing:
-
-### Category
-
-`Agricultural Productivity / Climatic and Soil Factors`
-
-### Priority
-
-`Medium`
-
-### Identified factors
-
-- Reduced estimated productivity
-- Irregular rainfall
-- Possible water deficit
-- Higher temperatures
-- Possible soil changes
-
-### Recommendations
-
-The system suggests additional investigation using information such as:
-
-- Historical productivity
-- Meteorological records
-- Soil characteristics
-- Soil moisture
-- Crop management
-- Pest and disease information
-
-### Human validation
-
-```text
-Requer análise humana: True
-```
-
-This is intentional.
-
-The prototype is designed to **support analysis rather than present AI-generated hypotheses as definitive agricultural diagnoses**.
-
----
-
-# 🧠 Responsible AI Approach
-
-One of the principles of this laboratory is that an AI-generated answer should not automatically be treated as truth.
-
-The experiments therefore emphasize:
-
-### Evidence
-
-Use available information to ground the response.
-
-### Uncertainty
-
-Distinguish observations from hypotheses.
-
-### Limitations
-
-Explicitly communicate when available data is insufficient.
-
-### Human-in-the-loop
-
-Keep domain specialists involved when decisions require expertise or additional validation.
-
-This becomes particularly important in domains where incorrect conclusions can influence real-world decisions.
-
----
-
-# ⚙️ Technology Stack
-
-## Core
-
-<p>
-  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" />
-  <img src="https://img.shields.io/badge/Google%20Gemini-4285F4?style=flat-square&logo=google&logoColor=white" />
-  <img src="https://img.shields.io/badge/Pydantic-E92063?style=flat-square&logo=pydantic&logoColor=white" />
-  <img src="https://img.shields.io/badge/NumPy-013243?style=flat-square&logo=numpy&logoColor=white" />
-</p>
-
-## Generative AI
-
-```text
-Large Language Models
-Prompt Engineering
-Structured Outputs
-Embeddings
-RAG
-Semantic Search
-Vector Search
-Tool Calling
-AI Agents
-AI Automation
-LLM Evaluation
-```
-
-## Development
-
-```text
-Python
-Git
-GitHub
-Virtual Environments
-Environment Variables
-JSON
-CSV
-```
-
----
-
-# 📦 Main Dependencies
-
-```text
-google-genai
-python-dotenv
-pydantic
-numpy
-```
-
-The dependency list is intentionally kept focused on the components required by the laboratory.
-
----
-
-# 📁 Repository Structure
+# ⚙️ O que segura os testes
+
+| Módulo | Por que está ali |
+|---|---|
+| `src/gemini_client.py` | Uma chave, geração, embedding e nova tentativa em 503 ou 429 |
+| `src/retrieval.py` | Corte da base, nota por palavra e cosseno |
+| `src/agri_data.py` | Tabelas inventadas. `Algodão` e `Centro Oeste` acham a linha |
+| `src/config.py` | Caminhos, modelos e a pergunta dos experimentos 05 a 08 |
+| `src/results.py` | O JSON cai em `results/` de qualquer pasta |
 
 ```text
 genai-research-lab/
-│
-├── data/
-│   └── agricultural_knowledge.txt
-│
-├── experiments/
-│   ├── __init__.py
-│   ├── prompt_comparison_01.py
-│   ├── structured_output_02.py
-│   ├── model_comparison_03.py
-│   ├── evaluation_04.py
-│   ├── rag_05.py
-│   ├── embeddings_06.py
-│   ├── vector_search_07.py
-│   ├── rag_embeddings_08.py
-│   ├── tool_calling_09.py
-│   ├── ai_agent_10.py
-│   ├── ai_automation_11.py
-│   └── agrogenai_12.py
-│
-├── results/
-│   ├── structured_output_02.json
-│   ├── model_comparison_03.json
-│   ├── evaluation_04.json
-│   ├── rag_05.json
-│   ├── embeddings_06.json
-│   ├── vector_search_07.json
-│   ├── rag_embeddings_08.json
-│   ├── tool_calling_09.json
-│   ├── ai_agent_10.json
-│   ├── ai_automation_11.json
-│   ├── ai_automation_11.csv
-│   └── agrogenai_12.json
-│
-├── src/
-│   ├── __init__.py
-│   └── gemini_client.py
-│
-├── .env.example
-├── .gitignore
-├── requirements.txt
-└── README.md
+├── data/            o texto agrícola dos testes
+├── experiments/     os 12 testes e o testar.py
+├── results/         o registro de cada execução
+├── src/             cliente, busca e tabelas
+└── tests/           a checagem que não gasta API
 ```
+
+Dependências: `google-genai`, `python-dotenv`, `pydantic`, `numpy`.
 
 ---
 
-# 🚀 Getting Started
+# ▶️ Para repetir
 
-## 1. Clone the repository
+O registro já está nesta página. Os comandos servem para rodar de novo.
 
 ```bash
 git clone https://github.com/carinasouzasants-dev/genai-research-lab.git
 cd genai-research-lab
-```
-
-## 2. Create a virtual environment
-
-```bash
 python -m venv .venv
-```
-
-### macOS / Linux
-
-```bash
 source .venv/bin/activate
-```
-
-### Windows
-
-```bash
-.venv\Scripts\activate
-```
-
-## 3. Install dependencies
-
-```bash
 pip install -r requirements.txt
 ```
-
-## 4. Configure the API key
-
-Create a `.env` file in the project root:
 
 ```env
 GEMINI_API_KEY=your_api_key_here
 ```
 
-The `.env` file is excluded from version control.
-
-Never commit API keys or other secrets.
-
----
-
-# ▶️ Running an Experiment
-
-Each experiment can be executed independently.
-
-Example:
+O `.env` fica na raiz e não entra no Git.
 
 ```bash
-python experiments/prompt_comparison_01.py
-```
-
-Another example:
-
-```bash
-python experiments/ai_agent_10.py
-```
-
-To run the final AgroGenAI prototype:
-
-```bash
+python -m unittest tests.test_lab -v
+python experiments/testar.py
 python experiments/agrogenai_12.py
 ```
 
-The AgroGenAI result is saved to:
-
-```text
-results/agrogenai_12.json
-```
+No `testar.py`, Enter usa a pergunta do laboratório e `sair` encerra. A busca por palavra aparece na hora. A resposta `s` chama o Gemini. O experimento 03 precisa ter rodado antes do 04.
 
 ---
 
-# 📊 Experimental Evidence
+# 🔐 O que este teste não faz
 
-The laboratory stores structured outputs generated during experiments.
+A base é curta, e um parágrafo foi escrito para repetir as palavras da pergunta. Foi assim que a diferença entre as buscas ficou visível. O juiz do experimento 04 também é um modelo. Cada JSON é uma execução, e muda se o script rodar outra vez.
 
-This makes it possible to inspect results after execution instead of relying only on terminal output.
-
-Examples include:
-
-```text
-results/
-├── model_comparison_03.json
-├── evaluation_04.json
-├── embeddings_06.json
-├── vector_search_07.json
-├── rag_embeddings_08.json
-├── tool_calling_09.json
-├── ai_agent_10.json
-├── ai_automation_11.json
-├── ai_automation_11.csv
-└── agrogenai_12.json
-```
-
-The results directory therefore acts as an experimental record of the laboratory's progression.
+O AgroGenAI não fecha causa de lavoura. Ele organiza o relatório, mostra de qual trecho a análise saiu e para quando falta gente no meio.
 
 ---
 
-# 🔍 Key Engineering Lessons
+# 👩🏻‍💻 Autora
 
-## 1. Prompting is an engineering variable
-
-Small changes in instructions can influence model behavior and output quality.
-
-## 2. Structured outputs make LLMs easier to integrate
-
-Schemas turn free-form generation into data that software can validate and consume.
-
-## 3. Retrieval can provide contextual grounding
-
-RAG allows an application to provide relevant external information to the model.
-
-## 4. Embeddings enable semantic retrieval
-
-Meaning can be represented numerically and compared through vector similarity.
-
-## 5. LLMs become more useful when connected to tools
-
-Tool Calling allows models to interact with external functions and information.
-
-## 6. Agents combine reasoning and actions
-
-An agentic workflow can decide which action to perform and use its result in subsequent steps.
-
-## 7. Automation transforms AI capabilities into workflows
-
-The value of an LLM increases when its output can become structured data consumed by another process.
-
-## 8. Evaluation is essential
-
-A response being generated successfully does not mean that it is correct, useful or appropriate.
-
-## 9. Human validation remains important
-
-Especially when data is incomplete or the domain requires specialized expertise.
-
----
-
-# 🧭 Design Philosophy
-
-The laboratory follows a progressive engineering approach:
-
-```text
-Understand
-    ↓
-Experiment
-    ↓
-Measure
-    ↓
-Evaluate
-    ↓
-Integrate
-    ↓
-Apply
-```
-
-Instead of jumping directly into a complex AI application, each layer is investigated independently before being incorporated into a larger system.
-
-This makes the evolution of the project explicit and reproducible.
-
----
-
-# 🔐 Limitations
-
-This repository is an experimental research and learning project.
-
-The current implementation has several limitations:
-
-- Agricultural information is experimental and limited.
-- Some external data sources are simulated.
-- The vector search implementation is local.
-- The knowledge base is intentionally small.
-- The evaluation methodology is still basic.
-- AgroGenAI is not a production agricultural decision-support system.
-- Generated recommendations require domain validation.
-- Real-world deployment would require stronger evaluation, observability, security, data governance and reliability controls.
-
-These limitations are part of the project's current scope and provide opportunities for future development.
-
----
-
-# 🛣️ Future Roadmap
-
-The next development stages may include:
-
-- [ ] Streamlit interface for AgroGenAI
-- [ ] Larger agricultural knowledge base
-- [ ] Real agricultural datasets
-- [ ] Persistent vector database
-- [ ] Improved retrieval evaluation
-- [ ] Retrieval quality metrics
-- [ ] Automated experiment evaluation
-- [ ] Real external API integrations
-- [ ] Agent observability
-- [ ] Token and cost tracking
-- [ ] Latency benchmarking
-- [ ] Automated tests
-- [ ] Experiment dashboard
-- [ ] Production-oriented architecture
-
----
-
-# 💡 Why AgroGenAI?
-
-Agriculture generates large amounts of information across different sources such as:
-
-```text
-Weather
-Soil
-Productivity
-Crop Management
-Historical Records
-Operational Data
-Pest & Disease Information
-```
-
-One potential role for Generative AI is to help users interact with these sources through natural language while connecting retrieved evidence to structured analysis.
-
-AgroGenAI is an experimental exploration of this idea.
-
-The objective is not to replace agricultural expertise.
-
-The objective is to investigate how an AI system could help **organize information, retrieve relevant context, identify factors and support human analysis**.
-
----
-
-# 👩🏻‍💻 About the Author
-
-## Carina Souza
-
-Software Engineering student focused on **Artificial Intelligence, Generative AI and AI Engineering**.
-
-This laboratory represents a practical learning journey through the engineering of Generative AI systems, from individual LLM experiments to an integrated applied AI prototype.
-
-### Current areas of interest
-
-```text
-Artificial Intelligence
-Generative AI
-Large Language Models
-RAG
-AI Agents
-Python
-Data
-Automation
-Software Engineering
-Applied AI
-```
-
----
-
-# 🔗 Connect
+**Carina Souza**  
+Estudante de engenharia de software. Montei este laboratório para aprender IA generativa do jeito que eu quero usar: testar a peça, gravar o resultado e só então colocar a peça num fluxo agrícola, com revisão humana no fim.
 
 <p align="center">
   <a href="https://github.com/carinasouzasants-dev">
     <img src="https://img.shields.io/badge/GitHub-Carina%20Souza-181717?style=for-the-badge&logo=github&logoColor=white" />
   </a>
-
   <a href="https://www.linkedin.com/in/carina-souza-dev">
     <img src="https://img.shields.io/badge/LinkedIn-Carina%20Souza-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white" />
   </a>
 </p>
-
----
 
 <p align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=0:00D4FF,50:4F46E5,100:0B1020&height=130&section=footer" width="100%" />
 </p>
 
 <p align="center">
-  <strong>Experiment. Evaluate. Build. Apply. 🚀</strong>
+  <strong>Experimentar. Testar. Avaliar. Aplicar.</strong>
 </p>
