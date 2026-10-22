@@ -1,45 +1,15 @@
-import json
-import os
-import re
+import sys
 from pathlib import Path
 
-from dotenv import load_dotenv
-from google import genai
-from google.genai import types
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from pydantic import BaseModel
 
+from src.config import EMBEDDING_MODEL, MODEL_FLASH, RESULTS_DIR
+from src.gemini_client import embed_text, generate_content
+from src.results import save_json
+from src.retrieval import cosine_similarity, load_chunks
 
-# ============================================================
-# CONFIGURAÇÃO
-# ============================================================
-
-load_dotenv()
-
-API_KEY = os.getenv("GEMINI_API_KEY")
-
-if not API_KEY:
-    raise ValueError(
-        "GEMINI_API_KEY não encontrada. "
-        "Verifique o arquivo .env."
-    )
-
-client = genai.Client(api_key=API_KEY)
-
-GENERATION_MODEL = "gemini-3.8-flash"
-EMBEDDING_MODEL = "gemini-embedding-2"
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_PATH = BASE_DIR / "data" / "agricultural_knowledge.txt"
-RESULTS_DIR = BASE_DIR / "results"
-
-RESULTS_DIR.mkdir(exist_ok=True)
-
-JSON_OUTPUT_PATH = RESULTS_DIR / "agrogenai_12.json"
-
-
-# ============================================================
-# MODELO DE SAÍDA
-# ============================================================
 
 class AgroGenAIAnalysis(BaseModel):
     categoria: str
@@ -51,102 +21,6 @@ class AgroGenAIAnalysis(BaseModel):
     riscos_e_limitacoes: list[str]
     requer_analise_humana: bool
 
-
-# ============================================================
-# CARREGAMENTO DA BASE DE CONHECIMENTO
-# ============================================================
-
-def load_knowledge_base() -> list[str]:
-    if not DATA_PATH.exists():
-        raise FileNotFoundError(
-            f"Base de conhecimento não encontrada: {DATA_PATH}"
-        )
-
-    text = DATA_PATH.read_text(encoding="utf-8")
-
-    chunks = [
-        chunk.strip()
-        for chunk in re.split(r"\n\s*\n", text)
-        if chunk.strip()
-    ]
-
-    return chunks
-
-
-# ============================================================
-# EMBEDDINGS
-# ============================================================
-
-def generate_embedding(text: str) -> list[float]:
-    response = client.models.embed_content(
-        model=EMBEDDING_MODEL,
-        contents=text,
-    )
-
-    return response.embeddings[0].values
-
-
-# ============================================================
-# SIMILARIDADE DE COSSENO
-# ============================================================
-
-def cosine_similarity(
-    vector_a: list[float],
-    vector_b: list[float],
-) -> float:
-
-    dot_product = sum(
-        a * b for a, b in zip(vector_a, vector_b)
-    )
-
-    norm_a = sum(a * a for a in vector_a) ** 0.5
-    norm_b = sum(b * b for b in vector_b) ** 0.5
-
-    if norm_a == 0 or norm_b == 0:
-        return 0.0
-
-    return dot_product / (norm_a * norm_b)
-
-
-# ============================================================
-# BUSCA SEMÂNTICA
-# ============================================================
-
-def semantic_search(
-    query: str,
-    documents: list[str],
-    top_k: int = 3,
-):
-    query_embedding = generate_embedding(query)
-
-    scored_documents = []
-
-    for document in documents:
-        document_embedding = generate_embedding(document)
-
-        similarity = cosine_similarity(
-            query_embedding,
-            document_embedding,
-        )
-
-        scored_documents.append(
-            {
-                "document": document,
-                "similarity": similarity,
-            }
-        )
-
-    scored_documents.sort(
-        key=lambda item: item["similarity"],
-        reverse=True,
-    )
-
-    return scored_documents[:top_k]
-
-
-# ============================================================
-# CENÁRIO AGRÍCOLA
-# ============================================================
 
 agricultural_report = """
 Relatório experimental de uma área de produção de soja.
@@ -169,63 +43,62 @@ Este relatório é experimental e não representa um diagnóstico agrícola.
 """
 
 
-# ============================================================
-# BUSCA DE CONTEXTO
-# ============================================================
+def semantic_search(query, documents, top_k=3):
+    # Transforma o relatório e cada parágrafo em vetor e fica com os mais próximos.
+    query_embedding = embed_text(query)
+    scored_documents = []
 
-print("\n" + "=" * 70)
-print("AGROGENAI | ANÁLISE INTELIGENTE DE CENÁRIO AGRÍCOLA")
-print("=" * 70)
+    for document in documents:
+        similarity = cosine_similarity(
+            query_embedding,
+            embed_text(document),
+        )
+        scored_documents.append(
+            {
+                "document": document,
+                "similarity": similarity,
+            }
+        )
 
-print("\nCarregando base de conhecimento...")
+    scored_documents.sort(
+        key=lambda item: item["similarity"],
+        reverse=True,
+    )
+    return scored_documents[:top_k]
 
-knowledge_base = load_knowledge_base()
 
-print(f"Documentos encontrados: {len(knowledge_base)}")
+def main():
+    print("\n" + "=" * 70)
+    print("AGROGENAI | ANÁLISE INTELIGENTE DE CENÁRIO AGRÍCOLA")
+    print("=" * 70)
+    print("\nCarregando base de conhecimento...")
 
-print("\nExecutando busca semântica...")
+    knowledge_base = load_chunks()
+    print(f"Documentos encontrados: {len(knowledge_base)}")
+    print("\nExecutando busca semântica...")
 
-retrieved_documents = semantic_search(
-    agricultural_report,
-    knowledge_base,
-    top_k=3,
-)
-
-print("\nDocumentos mais relevantes:")
-
-for index, item in enumerate(retrieved_documents, start=1):
-    print(
-        f"\n[{index}] Similaridade: "
-        f"{item['similarity']:.4f}"
+    retrieved_documents = semantic_search(
+        agricultural_report,
+        knowledge_base,
+        top_k=3,
     )
 
-    print(item["document"][:300])
+    print("\nDocumentos mais relevantes:")
 
+    for index, item in enumerate(retrieved_documents, start=1):
+        print(f"\n[{index}] Similaridade: {item['similarity']:.4f}")
+        print(item["document"][:300])
 
-# ============================================================
-# CONSTRUÇÃO DO CONTEXTO
-# ============================================================
-
-context = "\n\n".join(
-    [
+    context = "\n\n".join(
         (
             f"EVIDÊNCIA {index} "
             f"(similaridade {item['similarity']:.4f}):\n"
             f"{item['document']}"
         )
-        for index, item in enumerate(
-            retrieved_documents,
-            start=1,
-        )
-    ]
-)
+        for index, item in enumerate(retrieved_documents, start=1)
+    )
 
-
-# ============================================================
-# PROMPT PRINCIPAL
-# ============================================================
-
-prompt = f"""
+    prompt = f"""
 Você é um assistente experimental de inteligência artificial
 voltado para análise de informações agrícolas.
 
@@ -265,120 +138,77 @@ Produza uma análise contendo:
 A resposta deve seguir exatamente o schema fornecido.
 """
 
+    print("\nGerando análise com IA...")
 
-# ============================================================
-# GERAÇÃO ESTRUTURADA
-# ============================================================
+    response = generate_content(
+        prompt,
+        model=MODEL_FLASH,
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": AgroGenAIAnalysis,
+        },
+    )
+    analysis = AgroGenAIAnalysis.model_validate_json(response.text)
 
-print("\nGerando análise com IA...")
+    print("\n" + "=" * 70)
+    print("RESULTADO AGROGENAI")
+    print("=" * 70)
+    print(f"\nCategoria:\n{analysis.categoria}")
+    print(f"\nPrioridade:\n{analysis.prioridade}")
+    print(f"\nResumo executivo:\n{analysis.resumo_executivo}")
+    print("\nFatores identificados:")
 
-response = client.models.generate_content(
-    model=GENERATION_MODEL,
-    contents=prompt,
-    config={
-        "response_mime_type": "application/json",
-        "response_schema": AgroGenAIAnalysis,
-    },
-)
+    for factor in analysis.fatores_identificados:
+        print(f"- {factor}")
 
-analysis = AgroGenAIAnalysis.model_validate_json(
-    response.text
-)
+    print("\nRecomendações:")
 
+    for recommendation in analysis.recomendacoes:
+        print(f"- {recommendation}")
 
-# ============================================================
-# RESULTADO
-# ============================================================
+    print("\nRiscos e limitações:")
 
-print("\n" + "=" * 70)
-print("RESULTADO AGROGENAI")
-print("=" * 70)
+    for risk in analysis.riscos_e_limitacoes:
+        print(f"- {risk}")
 
-print(f"\nCategoria:")
-print(analysis.categoria)
+    print(f"\nRequer análise humana: {analysis.requer_analise_humana}")
 
-print(f"\nPrioridade:")
-print(analysis.prioridade)
-
-print(f"\nResumo executivo:")
-print(analysis.resumo_executivo)
-
-print("\nFatores identificados:")
-
-for factor in analysis.fatores_identificados:
-    print(f"- {factor}")
-
-print("\nRecomendações:")
-
-for recommendation in analysis.recomendacoes:
-    print(f"- {recommendation}")
-
-print("\nRiscos e limitações:")
-
-for risk in analysis.riscos_e_limitacoes:
-    print(f"- {risk}")
-
-print(
-    "\nRequer análise humana: "
-    f"{analysis.requer_analise_humana}"
-)
-
-
-# ============================================================
-# SALVAMENTO
-# ============================================================
-
-result = {
-    "project": "AgroGenAI",
-    "experiment": 12,
-    "generation_model": GENERATION_MODEL,
-    "embedding_model": EMBEDDING_MODEL,
-    "knowledge_documents": len(knowledge_base),
-    "retrieved_documents": [
+    output_path = save_json(
+        RESULTS_DIR / "agrogenai_12.json",
         {
-            "similarity": item["similarity"],
-            "document": item["document"],
-        }
-        for item in retrieved_documents
-    ],
-    "agricultural_report": agricultural_report.strip(),
-    "analysis": analysis.model_dump(),
-}
-
-
-with open(
-    JSON_OUTPUT_PATH,
-    "w",
-    encoding="utf-8",
-) as file:
-    json.dump(
-        result,
-        file,
-        ensure_ascii=False,
-        indent=2,
+            "project": "AgroGenAI",
+            "experiment": 12,
+            "generation_model": MODEL_FLASH,
+            "embedding_model": EMBEDDING_MODEL,
+            "knowledge_documents": len(knowledge_base),
+            "retrieved_documents": [
+                {
+                    "similarity": item["similarity"],
+                    "document": item["document"],
+                }
+                for item in retrieved_documents
+            ],
+            "agricultural_report": agricultural_report.strip(),
+            "analysis": analysis.model_dump(),
+        },
     )
 
+    print("\n" + "=" * 70)
+    print("AGROGENAI CONCLUÍDO")
+    print("=" * 70)
+    print(f"\nResultado salvo em:\n{output_path}")
+    print("\nPipeline executado:")
+    print(
+        "Relatório agrícola"
+        " → Embeddings"
+        " → Busca semântica"
+        " → Recuperação de contexto"
+        " → LLM"
+        " → Structured Output"
+        " → Análise"
+    )
+    print("\n" + "=" * 70)
 
-# ============================================================
-# FINALIZAÇÃO
-# ============================================================
 
-print("\n" + "=" * 70)
-print("AGROGENAI CONCLUÍDO")
-print("=" * 70)
-
-print(f"\nResultado salvo em:")
-print(JSON_OUTPUT_PATH)
-
-print("\nPipeline executado:")
-print(
-    "Relatório agrícola"
-    " → Embeddings"
-    " → Busca semântica"
-    " → Recuperação de contexto"
-    " → LLM"
-    " → Structured Output"
-    " → Análise"
-)
-
-print("\n" + "=" * 70)
+if __name__ == "__main__":
+    main()

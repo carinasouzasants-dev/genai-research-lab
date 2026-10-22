@@ -1,273 +1,66 @@
-import json
-import math
-import os
-import re
+import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import numpy as np
-from dotenv import load_dotenv
-from google import genai
 
+from src.config import (
+    EMBEDDING_MODEL,
+    MODEL_FLASH_36,
+    RESULTS_DIR,
+    RETRIEVAL_QUESTION,
+)
+from src.gemini_client import embed_text, generate_response
+from src.results import save_json
+from src.retrieval import load_chunks, similarities
 
-# ============================================================
-# CONFIGURAÇÃO
-# ============================================================
-
-load_dotenv()
-
-api_key = os.getenv("GEMINI_API_KEY")
-
-if not api_key:
-    raise ValueError(
-        "GEMINI_API_KEY não encontrada. "
-        "Verifique o arquivo .env."
-    )
-
-client = genai.Client(api_key=api_key)
-
-
-# ============================================================
-# ARQUIVOS
-# ============================================================
-
-KNOWLEDGE_PATH = "data/agricultural_knowledge.txt"
-OUTPUT_PATH = "results/rag_embeddings_08.json"
-
-
-# ============================================================
-# MODELOS
-# ============================================================
-
-# Modelo utilizado para transformar textos em vetores.
-EMBEDDING_MODEL = "gemini-embedding-2"
-
-# Modelo utilizado para gerar a resposta final.
-# Alterado para evitar o erro 503 de alta demanda.
-GENERATION_MODEL = "gemini-3.6-flash"
-
-
-# ============================================================
-# CONFIGURAÇÃO DA BUSCA
-# ============================================================
 
 TOP_K = 3
+# O 3.8 respondeu 503, então esta execução usa o 3.6.
+GENERATION_MODEL = MODEL_FLASH_36
 
 
-# ============================================================
-# CARREGAR CONHECIMENTO
-# ============================================================
+def main():
+    chunks = load_chunks()
+    question = RETRIEVAL_QUESTION
 
-with open(
-    KNOWLEDGE_PATH,
-    "r",
-    encoding="utf-8",
-) as file:
-    knowledge = file.read()
+    print("\n" + "=" * 70)
+    print("EXPERIMENTO 08 - RAG COM EMBEDDINGS")
+    print("=" * 70)
+    print("\nConstruindo índice vetorial...")
 
+    document_embeddings = []
 
-# ============================================================
-# DIVIDIR DOCUMENTO EM CHUNKS
-# ============================================================
+    for index, chunk in enumerate(chunks, start=1):
+        print(f"Gerando embedding {index}/{len(chunks)}...")
+        document_embeddings.append(embed_text(chunk))
 
-chunks = [
-    chunk.strip()
-    for chunk in re.split(
-        r"\n\s*\n",
-        knowledge,
-    )
-    if chunk.strip()
-]
+    embedding_matrix = np.array(document_embeddings)
 
+    print("\nÍndice vetorial criado.")
+    print(f"Documentos indexados: {len(chunks)}")
+    print(f"Dimensão dos embeddings: {embedding_matrix.shape[1]}")
+    print("\nGerando embedding da pergunta...")
 
-# ============================================================
-# PERGUNTA
-# ============================================================
-
-question = """
-Uma propriedade agrícola apresentou uma queda significativa
-na produtividade. Quais fatores deveriam ser investigados
-para entender as possíveis causas?
-"""
-
-
-# ============================================================
-# GERAR EMBEDDING
-# ============================================================
-
-def generate_embedding(text: str) -> list[float]:
-
-    response = client.models.embed_content(
-        model=EMBEDDING_MODEL,
-        contents=text,
-    )
-
-    return response.embeddings[0].values
-
-
-# ============================================================
-# SIMILARIDADE DE COSSENO
-# ============================================================
-
-def cosine_similarity(
-    vector_a: list[float],
-    vector_b: list[float],
-) -> float:
-
-    dot_product = sum(
-        a * b
-        for a, b in zip(
-            vector_a,
-            vector_b,
-        )
-    )
-
-    magnitude_a = math.sqrt(
-        sum(
-            value * value
-            for value in vector_a
-        )
-    )
-
-    magnitude_b = math.sqrt(
-        sum(
-            value * value
-            for value in vector_b
-        )
-    )
-
-    if magnitude_a == 0 or magnitude_b == 0:
-        return 0.0
-
-    return dot_product / (
-        magnitude_a * magnitude_b
-    )
-
-
-# ============================================================
-# CONSTRUIR ÍNDICE VETORIAL
-# ============================================================
-
-print("\n" + "=" * 70)
-print("EXPERIMENTO 08 - RAG COM EMBEDDINGS")
-print("=" * 70)
-
-print("\nConstruindo índice vetorial...")
-
-
-document_embeddings = []
-
-for index, chunk in enumerate(
-    chunks,
-    start=1,
-):
-
-    print(
-        f"Gerando embedding "
-        f"{index}/{len(chunks)}..."
-    )
-
-    embedding = generate_embedding(chunk)
-
-    document_embeddings.append(
-        embedding
-    )
-
-
-embedding_matrix = np.array(
-    document_embeddings
-)
-
-
-print(
-    "\nÍndice vetorial criado."
-)
-
-print(
-    f"Documentos indexados: "
-    f"{len(chunks)}"
-)
-
-print(
-    f"Dimensão dos embeddings: "
-    f"{embedding_matrix.shape[1]}"
-)
-
-
-# ============================================================
-# EMBEDDING DA PERGUNTA
-# ============================================================
-
-print(
-    "\nGerando embedding da pergunta..."
-)
-
-question_embedding = generate_embedding(
-    question
-)
-
-
-# ============================================================
-# BUSCA VETORIAL
-# ============================================================
-
-print(
-    "\nExecutando busca semântica..."
-)
-
-search_results = []
-
-for index, document_vector in enumerate(
-    embedding_matrix
-):
-
-    similarity = cosine_similarity(
-        question_embedding,
-        document_vector.tolist(),
-    )
-
-    search_results.append(
+    question_embedding = embed_text(question)
+    scores = similarities(question_embedding, embedding_matrix)
+    search_results = [
         {
             "chunk_index": index + 1,
             "chunk": chunks[index],
-            "similarity": round(
-                similarity,
-                6,
-            ),
+            "similarity": score,
         }
+        for index, score in enumerate(scores)
+    ]
+    search_results.sort(
+        key=lambda item: item["similarity"],
+        reverse=True,
     )
+    top_results = search_results[:TOP_K]
+    context = "\n\n".join(result["chunk"] for result in top_results)
 
-
-# ============================================================
-# RANKING
-# ============================================================
-
-search_results.sort(
-    key=lambda item: item["similarity"],
-    reverse=True,
-)
-
-
-# ============================================================
-# SELECIONAR TOP-K
-# ============================================================
-
-top_results = search_results[:TOP_K]
-
-
-# ============================================================
-# CONSTRUIR CONTEXTO
-# ============================================================
-
-context = "\n\n".join(
-    result["chunk"]
-    for result in top_results
-)
-
-
-# ============================================================
-# PROMPT RAG
-# ============================================================
-
-prompt = f"""
+    prompt = f"""
 Você é um assistente de análise agrícola.
 
 Sua tarefa é responder à pergunta utilizando exclusivamente
@@ -293,104 +86,48 @@ PERGUNTA:
 {question}
 """
 
+    print("\nGerando resposta com o modelo...")
+    print(f"Modelo de geração: {GENERATION_MODEL}")
 
-# ============================================================
-# GERAÇÃO DA RESPOSTA
-# ============================================================
+    answer = generate_response(prompt, model=GENERATION_MODEL)
 
-print(
-    "\nGerando resposta com o modelo..."
-)
+    print("\n" + "-" * 70)
+    print("PERGUNTA:")
+    print(question)
+    print("\n" + "-" * 70)
+    print("TRECHOS RECUPERADOS:")
 
-print(
-    f"Modelo de geração: {GENERATION_MODEL}"
-)
+    for rank, result in enumerate(top_results, start=1):
+        print(f"\n[{rank}] Similaridade: {result['similarity']}")
+        print(result["chunk"])
 
-response = client.models.generate_content(
-    model=GENERATION_MODEL,
-    contents=prompt,
-)
+    print("\n" + "-" * 70)
+    print("RESPOSTA GERADA PELO RAG:")
+    print(answer)
 
-answer = response.text
-
-
-# ============================================================
-# EXIBIR RESULTADOS
-# ============================================================
-
-print("\n" + "-" * 70)
-
-print("PERGUNTA:")
-print(question)
-
-print("\n" + "-" * 70)
-
-print("TRECHOS RECUPERADOS:")
-
-for rank, result in enumerate(
-    top_results,
-    start=1,
-):
-
-    print(
-        f"\n[{rank}] "
-        f"Similaridade: "
-        f"{result['similarity']}"
+    output_path = save_json(
+        RESULTS_DIR / "rag_embeddings_08.json",
+        {
+            "experiment": "08 - RAG with Embeddings",
+            "question_group": "retrieval-05-08",
+            "retrieval": "embedding",
+            "embedding_model": EMBEDDING_MODEL,
+            "generation_model": GENERATION_MODEL,
+            "question": question.strip(),
+            "document_count": len(chunks),
+            "embedding_dimension": int(embedding_matrix.shape[1]),
+            "top_k": TOP_K,
+            "retrieved_chunks": top_results,
+            "context": context,
+            "answer": answer,
+        },
     )
 
-    print(result["chunk"])
+    print("\n" + "=" * 70)
+    print("EXPERIMENTO 08 CONCLUÍDO")
+    print("=" * 70)
+    print(f"\nResultado salvo em: {output_path}")
 
 
-print("\n" + "-" * 70)
-
-print("RESPOSTA GERADA PELO RAG:")
-
-print(answer)
-
-
-# ============================================================
-# SALVAR RESULTADOS
-# ============================================================
-
-output = {
-    "experiment": "08 - RAG with Embeddings",
-    "embedding_model": EMBEDDING_MODEL,
-    "generation_model": GENERATION_MODEL,
-    "question": question,
-    "document_count": len(chunks),
-    "embedding_dimension": int(
-        embedding_matrix.shape[1]
-    ),
-    "top_k": TOP_K,
-    "retrieved_chunks": top_results,
-    "context": context,
-    "answer": answer,
-}
-
-
-with open(
-    OUTPUT_PATH,
-    "w",
-    encoding="utf-8",
-) as file:
-
-    json.dump(
-        output,
-        file,
-        ensure_ascii=False,
-        indent=4,
-    )
-
-
-# ============================================================
-# FINALIZAÇÃO
-# ============================================================
-
-print("\n" + "=" * 70)
-print("EXPERIMENTO 08 CONCLUÍDO")
-print("=" * 70)
-
-print(
-    f"\nResultado salvo em: "
-    f"{OUTPUT_PATH}"
-)
+if __name__ == "__main__":
+    main()

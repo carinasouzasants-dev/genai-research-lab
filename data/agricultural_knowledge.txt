@@ -43,3 +43,16 @@ de informações, geração de relatórios e apoio à tomada de decisão.
 Uma aplicação de IA deve utilizar dados relevantes, validar os
 resultados e considerar o contexto do problema antes de apoiar
 uma decisão operacional.
+
+Déficit hídrico e colheita
+
+Períodos secos reduzem a água no solo. Com menos água, a
+cultura forma menos grãos e a colheita do talhão diminui.
+Antes de concluir, confira o volume de chuva do período e a
+umidade medida no campo.
+
+Rotina do escritório da fazenda
+
+A falta de chuva no calendário operacional reduz o que a
+equipe administrativa produz em dias de deslocamento. Esse
+efeito é de rotina de escritório e não descreve a lavoura.

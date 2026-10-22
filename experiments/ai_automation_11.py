@@ -1,37 +1,18 @@
 import csv
-import json
-import os
+import sys
+from pathlib import Path
 
-from dotenv import load_dotenv
-from google import genai
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+
 from pydantic import BaseModel
 
-
-# ============================================================
-# CONFIGURAÇÃO
-# ============================================================
-
-load_dotenv()
-
-api_key = os.getenv("GEMINI_API_KEY")
-
-if not api_key:
-    raise ValueError(
-        "GEMINI_API_KEY não encontrada. "
-        "Verifique o arquivo .env."
-    )
-
-client = genai.Client(api_key=api_key)
-
-MODEL = "gemini-3.8-flash"
-
-JSON_OUTPUT_PATH = "results/ai_automation_11.json"
-CSV_OUTPUT_PATH = "results/ai_automation_11.csv"
+from src.config import MODEL_FLASH, RESULTS_DIR
+from src.gemini_client import generate_content
+from src.results import save_json
 
 
-# ============================================================
-# MODELO DE SAÍDA
-# ============================================================
+MODEL = MODEL_FLASH
+
 
 class AgriculturalReport(BaseModel):
     categoria: str
@@ -41,10 +22,6 @@ class AgriculturalReport(BaseModel):
     acao_recomendada: str
     requer_analise_humana: bool
 
-
-# ============================================================
-# DOCUMENTO DE ENTRADA
-# ============================================================
 
 agricultural_report = """
 RELATÓRIO EXPERIMENTAL DE CAMPO
@@ -70,10 +47,6 @@ clima, manejo e ocorrência de pragas antes de tomar uma
 decisão operacional.
 """
 
-
-# ============================================================
-# PROMPT DE AUTOMAÇÃO
-# ============================================================
 
 prompt = f"""
 Você é um sistema de automação para triagem de relatórios
@@ -109,179 +82,98 @@ Relatório:
 """
 
 
-# ============================================================
-# EXECUÇÃO DA IA
-# ============================================================
+def main():
+    print("\n" + "=" * 70)
+    print("EXPERIMENTO 11 - AI AUTOMATION")
+    print("=" * 70)
+    print("\nModelo:")
+    print(MODEL)
+    print("\nProcessando relatório...")
 
-print("\n" + "=" * 70)
-print("EXPERIMENTO 11 - AI AUTOMATION")
-print("=" * 70)
-
-print("\nModelo:")
-print(MODEL)
-
-print("\nProcessando relatório...")
-
-
-response = client.models.generate_content(
-    model=MODEL,
-    contents=prompt,
-    config={
-        "response_mime_type": "application/json",
-        "response_schema": AgriculturalReport,
-    },
-)
-
-
-# ============================================================
-# VALIDAR SAÍDA ESTRUTURADA
-# ============================================================
-
-analysis = AgriculturalReport.model_validate_json(
-    response.text
-)
-
-
-# ============================================================
-# EXIBIR RESULTADO
-# ============================================================
-
-print("\n" + "-" * 70)
-print("RESULTADO DA AUTOMAÇÃO")
-print("-" * 70)
-
-print(
-    "\nCategoria:"
-    f" {analysis.categoria}"
-)
-
-print(
-    "Prioridade:"
-    f" {analysis.prioridade}"
-)
-
-print(
-    "\nResumo:"
-    f"\n{analysis.resumo}"
-)
-
-print("\nFatores identificados:")
-
-for factor in analysis.fatores_identificados:
-    print(f"- {factor}")
-
-print(
-    "\nAção recomendada:"
-    f"\n{analysis.acao_recomendada}"
-)
-
-print(
-    "\nRequer análise humana:"
-    f" {analysis.requer_analise_humana}"
-)
-
-
-# ============================================================
-# PREPARAR DADOS PARA AUTOMAÇÃO
-# ============================================================
-
-automated_record = {
-    "experiment": "11 - AI Automation",
-    "model": MODEL,
-    "input_type": "agricultural_report",
-    "category": analysis.categoria,
-    "priority": analysis.prioridade,
-    "summary": analysis.resumo,
-    "identified_factors": analysis.fatores_identificados,
-    "recommended_action": analysis.acao_recomendada,
-    "requires_human_review": analysis.requer_analise_humana,
-    "data_note": (
-        "Os dados utilizados neste experimento são "
-        "experimentais e simulados exclusivamente para "
-        "este laboratório."
-    ),
-}
-
-
-# ============================================================
-# SALVAR JSON
-# ============================================================
-
-with open(
-    JSON_OUTPUT_PATH,
-    "w",
-    encoding="utf-8",
-) as file:
-
-    json.dump(
-        automated_record,
-        file,
-        ensure_ascii=False,
-        indent=4,
+    response = generate_content(
+        prompt,
+        model=MODEL,
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": AgriculturalReport,
+        },
     )
+    analysis = AgriculturalReport.model_validate_json(response.text)
 
+    print("\n" + "-" * 70)
+    print("RESULTADO DA AUTOMAÇÃO")
+    print("-" * 70)
+    print(f"\nCategoria: {analysis.categoria}")
+    print(f"Prioridade: {analysis.prioridade}")
+    print(f"\nResumo:\n{analysis.resumo}")
+    print("\nFatores identificados:")
 
-# ============================================================
-# SALVAR CSV
-# ============================================================
+    for factor in analysis.fatores_identificados:
+        print(f"- {factor}")
 
-with open(
-    CSV_OUTPUT_PATH,
-    "w",
-    encoding="utf-8",
-    newline="",
-) as file:
+    print(f"\nAção recomendada:\n{analysis.acao_recomendada}")
+    print(f"\nRequer análise humana: {analysis.requer_analise_humana}")
 
-    writer = csv.DictWriter(
-        file,
-        fieldnames=[
-            "category",
-            "priority",
-            "summary",
-            "identified_factors",
-            "recommended_action",
-            "requires_human_review",
-        ],
-    )
+    record = {
+        "category": analysis.categoria,
+        "priority": analysis.prioridade,
+        "summary": analysis.resumo,
+        "identified_factors": analysis.fatores_identificados,
+        "recommended_action": analysis.acao_recomendada,
+        "requires_human_review": analysis.requer_analise_humana,
+    }
 
-    writer.writeheader()
-
-    writer.writerow(
+    json_output = save_json(
+        RESULTS_DIR / "ai_automation_11.json",
         {
-            "category": analysis.categoria,
-            "priority": analysis.prioridade,
-            "summary": analysis.resumo,
-            "identified_factors": " | ".join(
-                analysis.fatores_identificados
+            "experiment": "11 - AI Automation",
+            "model": MODEL,
+            "input_type": "agricultural_report",
+            **record,
+            "data_note": (
+                "Os dados utilizados neste experimento são "
+                "experimentais e simulados exclusivamente para "
+                "este laboratório."
             ),
-            "recommended_action": analysis.acao_recomendada,
-            "requires_human_review": (
-                analysis.requer_analise_humana
-            ),
-        }
+        },
+    )
+
+    csv_output = RESULTS_DIR / "ai_automation_11.csv"
+    csv_output.parent.mkdir(parents=True, exist_ok=True)
+
+    with open(csv_output, "w", encoding="utf-8", newline="") as file:
+        writer = csv.DictWriter(
+            file,
+            fieldnames=[
+                "category",
+                "priority",
+                "summary",
+                "identified_factors",
+                "recommended_action",
+                "requires_human_review",
+            ],
+        )
+        writer.writeheader()
+        writer.writerow(
+            {
+                **record,
+                "identified_factors": " | ".join(
+                    analysis.fatores_identificados
+                ),
+            }
+        )
+
+    print("\n" + "=" * 70)
+    print("AUTOMAÇÃO CONCLUÍDA")
+    print("=" * 70)
+    print(f"\nJSON salvo em:\n{json_output}")
+    print(f"\nCSV salvo em:\n{csv_output}")
+    print(
+        "\nFluxo executado:"
+        "\nRelatório → IA → Classificação → "
+        "Dados estruturados → JSON + CSV"
     )
 
 
-# ============================================================
-# FINALIZAÇÃO
-# ============================================================
-
-print("\n" + "=" * 70)
-print("AUTOMAÇÃO CONCLUÍDA")
-print("=" * 70)
-
-print(
-    f"\nJSON salvo em:"
-    f"\n{JSON_OUTPUT_PATH}"
-)
-
-print(
-    f"\nCSV salvo em:"
-    f"\n{CSV_OUTPUT_PATH}"
-)
-
-print(
-    "\nFluxo executado:"
-    "\nRelatório → IA → Classificação → "
-    "Dados estruturados → JSON + CSV"
-)
+if __name__ == "__main__":
+    main()
